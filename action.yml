@@ -1,0 +1,48 @@
+###############################################################################################################################################################
+#                             Code example                                          #                               Explanation                               #
+###############################################################################################################################################################
+                                                                                    # The name and description of the action itself, these properties will
+                                                                                    # show up in the Action's Card when browsing the Action Marketplace. 
+name: Example
+description: Example description
+                                                                                    # Shown in the Action's Card when browsing the Action Marketplace.
+branding:                                                                           # Full list : https://github.com/haya14busa/github-action-brandings
+    icon: book
+    color: green
+
+inputs:                                                                             # Input list for your action.
+    owner:
+        description: 'Repository owner'
+        required: true
+    repo:
+        description: 'Repository name'
+        required: true
+    token:
+        description: 'A github PAT token that has read access to the repository.'
+        required: true
+
+runs:                                                                               # The configuration to run this action.
+    using: 'composite'                                                              # Composite tells github that this is not a javascript action nor a docker action.
+    steps:                                                                          # The list of steps to follow. Steps can have names to better explain what's going on.
+                                                                                    #
+        -   name: Checkout                                                          # 
+            uses: actions/checkout@v3                                               # Tells the runner to do a git checkout to download this action.
+                                                                                    #
+        -   name: Setup dotnet                                                      #
+            uses: actions/setup-dotnet@v3                                           # Tells the runner to setup dotnet 6
+            with:                                                                   #
+                dotnet-version: '6'                                                 # For other versions: https://github.com/actions/setup-dotnet
+                                                                                    #
+        -   name: Nuget                                                             #
+            uses: nuget/setup-nuget@v1                                              # Tells the runner to setup nuget
+                                                                                    #
+        -   name: Run Example
+            shell: bash                                                             # Down here you should pass your parameters to your app.
+            env:                                                                    # This setups the parameters as environment variables.
+                _owner: ${{ inputs.owner }}
+                _repo: ${{ inputs.repo }}
+                _token: ${{ inputs.token }}
+            run: |
+                dotnet restore
+                dotnet build
+                dotnet run
