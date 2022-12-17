@@ -43,6 +43,7 @@ runs:                                                                           
                 _repo: ${{ inputs.repo }}
                 _token: ${{ inputs.token }}
             run: |
+                cs src
                 dotnet restore
                 dotnet build
                 dotnet run
